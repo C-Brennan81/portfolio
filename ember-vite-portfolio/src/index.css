@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Cedarville Cursive', cursive;
+  background-color: #0d0503;
+  color: #fef3c7;
+}
