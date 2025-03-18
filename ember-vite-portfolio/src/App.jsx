@@ -127,12 +127,12 @@ export default function App() {
           <div className="grid gap-10 grid-cols-1 md:grid-cols-2">
             <motion.div className="bg-[#22110a] p-6 rounded-xl border border-amber-500 shadow-md hover:shadow-lg transition" whileHover={{ scale: 1.03 }}>
               <h4 className="text-2xl font-serif mb-2 text-amber-400">Project One</h4>
-              <p className="text-amber-200 mb-2">A fiery creation—built with HTML, CSS, JavaScript.</p>
+              <p className="text-amber-200 mb-2">Placeholder until I upload a project.</p>
               <a href="#" className="text-amber-500 hover:underline">View Project</a>
             </motion.div>
             <motion.div className="bg-[#22110a] p-6 rounded-xl border border-amber-500 shadow-md hover:shadow-lg transition" whileHover={{ scale: 1.03 }}>
               <h4 className="text-2xl font-serif mb-2 text-amber-400">Project Two</h4>
-              <p className="text-amber-200 mb-2">Another ember—crafted to echo both narrative and functionality.</p>
+              <p className="text-amber-200 mb-2">Placeholder until I Upload a project.</p>
               <a href="#" className="text-amber-500 hover:underline">View Project</a>
             </motion.div>
           </div>
