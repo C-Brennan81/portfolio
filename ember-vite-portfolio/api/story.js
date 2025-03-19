@@ -1,35 +1,35 @@
-// /api/story.js
-import { Configuration, OpenAIApi } from 'openai';
+import { OpenAI } from "openai";
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Only POST requests allowed' });
-  }
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-  const { messageLog } = req.body;
-
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
-  const openai = new OpenAIApi(configuration);
-
+export default async (req, res) => {
   try {
-    const response = await openai.createChatCompletion({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a fantasy text adventure narrator. Present immersive storytelling and provide clear choices in each reply.',
-        },
-        ...messageLog
-      ],
-      temperature: 0.8,
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const { messages } = req.body;
+
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ error: "Invalid request body: messages array missing" });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages,
     });
 
-    res.status(200).json({ reply: response.data.choices[0].message });
+    const reply = completion.choices?.[0]?.message?.content;
+
+    if (!reply) {
+      return res.status(500).json({ error: "No message content returned from OpenAI" });
+    }
+
+    return res.status(200).json({ reply });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch story from LLM.' });
+    console.error("❌ /api/story error:", err);
+    return res.status(500).json({ error: err.message || "Server error" });
   }
-}
+};

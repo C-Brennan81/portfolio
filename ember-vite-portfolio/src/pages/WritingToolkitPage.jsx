@@ -61,7 +61,7 @@ export default function CharacterCreator() {
     const itemUsed = inventory[Math.floor(Math.random() * inventory.length)];
     const updatedInventory = inventory.filter(item => item !== itemUsed);
     setInventory(updatedInventory);
-
+  
     const updatedStats = {
       ...stats,
       health: Math.max(0, stats.health - 1),
@@ -69,29 +69,47 @@ export default function CharacterCreator() {
       water: Math.max(0, stats.water - 1)
     };
     setStats(updatedStats);
-
+  
     const newLog = [
       ...messageLog,
       { role: 'user', content: `${name || 'The hero'} decides to ${choice}.` }
     ];
-
     setMessageLog(newLog);
-
-    const response = await fetch('/api/story', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messageLog: newLog })
-    });
-
-    const data = await response.json();
-    const story = data.reply?.content || 'Your story continues...';
-    setAdventureLog((prev) => [...prev, story]);
-    setStoryPrompt(`Inventory used: ${itemUsed}. Next move?`);
-
-    if (updatedStats.health <= 0 || updatedStats.food <= 0 || updatedStats.water <= 0) {
-      setAdventureLog((prev) => [...prev, 'Your journey ends here. You succumb to the harsh world.']);
+  
+    try {
+      const response = await fetch('/api/story', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageLog: newLog })
+      });
+  
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        console.error('Failed to parse JSON from response:', err);
+        setAdventureLog(prev => [...prev, '⚠ Server returned invalid JSON.']);
+        return;
+      }
+  
+      if (!response.ok || !data.reply || !data.reply.content) {
+        console.error('LLM Error:', data.error || 'No response content.');
+        setAdventureLog(prev => [...prev, '⚠ The LLM failed to respond correctly.']);
+        return;
+      }
+  
+      const story = data.reply.content;
+      setAdventureLog((prev) => [...prev, story]);
+      setStoryPrompt(`Inventory used: ${itemUsed}. Next move?`);
+  
+      if (updatedStats.health <= 0 || updatedStats.food <= 0 || updatedStats.water <= 0) {
+        setAdventureLog((prev) => [...prev, '❌ Your journey ends here. You succumb to the harsh world.']);
+      }
+    } catch (error) {
+      console.error('Error during fetch:', error);
+      setAdventureLog(prev => [...prev, '❌ A network or server error occurred.']);
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen bg-[#1e0f0a] text-amber-100 p-10 font-serif">
