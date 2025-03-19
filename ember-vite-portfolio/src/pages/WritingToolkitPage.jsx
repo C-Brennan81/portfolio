@@ -50,6 +50,8 @@ export default function CharacterCreator() {
 
   const tones = ['Serious', 'Whimsical', 'Dark', 'Heroic'];
   const genres = ['Fantasy', 'Post-Apocalyptic', 'Mystery', 'Steampunk'];
+  const [selectedSeed, setSelectedSeed] = useState('');
+
 
   const storySeeds = [
     'Steampunk City',
@@ -94,7 +96,7 @@ export default function CharacterCreator() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messageLog: newLog, tone, genre, maxTokens: 350,
-     settingSeed: selectedSeed     
+        settingSeed: selectedSeed     
          })
       });
 
@@ -167,6 +169,22 @@ export default function CharacterCreator() {
             {genres.map(g => <option key={g} value={g}>{g}</option>)}
           </select>
         </label>
+        
+        <label className="block mb-4">
+        <span className="block mb-1 font-medium">Story Setting / Seed:</span>
+        <select
+            className="w-full p-2 rounded bg-[#1c0a06] border border-amber-500 text-amber-100"
+            value={selectedSeed}
+            onChange={(e) => setSelectedSeed(e.target.value)}
+        >
+            <option value="">-- Select a Story Seed --</option>
+            {storySeeds.map(seed => (
+            <option key={seed} value={seed}>{seed}</option>
+            ))}
+        </select>
+        {selectedSeed && <p className="mt-1 text-sm italic text-amber-300">Selected: {selectedSeed}</p>}
+        </label>
+
 
         <div className="mt-6 text-sm text-amber-200">
           <p className="mb-1 font-semibold">Current Stats:</p>
