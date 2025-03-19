@@ -47,7 +47,7 @@ export default function CharacterCreator() {
   const [messageLog, setMessageLog] = useState([]);
   const [tone, setTone] = useState('Serious');
   const [genre, setGenre] = useState('Fantasy');
-
+  const [customAction, setCustomAction] = useState('');
   const tones = ['Serious', 'Whimsical', 'Dark', 'Heroic'];
   const genres = ['Fantasy', 'Post-Apocalyptic', 'Mystery', 'Steampunk'];
   const [selectedSeed, setSelectedSeed] = useState('');
@@ -72,6 +72,12 @@ export default function CharacterCreator() {
     setSelectedTrait(traitName);
   };
 
+  const handleCustomAdventure = () => {
+    if (!customAction.trim()) return;
+    handleAdventureChoice(customAction);
+    setCustomAction('');
+  };
+  
   const handleAdventureChoice = async (choice) => {
     const itemUsed = inventory[Math.floor(Math.random() * inventory.length)];
     const updatedInventory = inventory.filter(item => item !== itemUsed);
@@ -205,6 +211,24 @@ export default function CharacterCreator() {
             <button onClick={() => handleAdventureChoice('scout')} className="bg-amber-600 text-black px-4 py-2 rounded hover:bg-amber-400 transition">Scout</button>
           </div>
         </div>
+
+        <div className="mt-4">
+            <label className="block mb-1 font-medium">Custom Action:</label>
+            <input
+                className="w-full p-2 mb-2 rounded bg-[#1c0a06] border border-amber-500 text-amber-100"
+                type="text"
+                value={customAction}
+                onChange={(e) => setCustomAction(e.target.value)}
+                placeholder="Type your own action (e.g., 'sneak into the ruins')"
+            />
+            <button
+                onClick={handleCustomAdventure}
+                className="bg-amber-600 text-black px-4 py-2 rounded hover:bg-amber-400 transition"
+            >
+                Submit Custom Action
+            </button>
+            </div>
+
 
         {adventureLog.length > 0 && (
           <div className="mt-6">
