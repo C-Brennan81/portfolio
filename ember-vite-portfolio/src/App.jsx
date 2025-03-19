@@ -111,7 +111,7 @@ export default function App() {
 
       <motion.section className="text-center py-24 relative z-10" variants={fadeIn} initial="hidden" animate="show">
         <motion.h2 className="text-5xl font-serif mb-4" whileHover={{ scale: 1.05 }}>You hit a brick wall enough, eventually it will fall.</motion.h2>
-        <motion.p className="text-xl text-amber-300" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>Weaving stories through fire, ink, and syntax.</motion.p>
+        <motion.p className="text-xl text-amber-300" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>Weaving stories through ink, and syntax.</motion.p>
       </motion.section>
 
       <motion.section id="about" className="py-20 border-t border-amber-600 relative z-10" variants={slideLeft} initial="hidden" whileInView="show" viewport={{ once: true }}>
