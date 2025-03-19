@@ -45,6 +45,19 @@ export default function CharacterCreator() {
   const [storyPrompt, setStoryPrompt] = useState('Your journey begins in a windswept vale.');
   const [inventory, setInventory] = useState(['Torch', 'Bread', 'Canteen']);
   const [messageLog, setMessageLog] = useState([]);
+  const [tone, setTone] = useState('Serious');
+  const [genre, setGenre] = useState('Fantasy');
+
+  const tones = ['Serious', 'Whimsical', 'Dark', 'Heroic'];
+  const genres = ['Fantasy', 'Post-Apocalyptic', 'Mystery', 'Steampunk'];
+
+  const storySeeds = [
+    'Steampunk City',
+    'Eldritch Forest',
+    'Cave Ruins',
+    'Frozen Mountains',
+    'Desert Wastes'
+  ];
 
   const handleTraitSelection = (traitName) => {
     const trait = traits.find(t => t.name === traitName);
@@ -61,7 +74,7 @@ export default function CharacterCreator() {
     const itemUsed = inventory[Math.floor(Math.random() * inventory.length)];
     const updatedInventory = inventory.filter(item => item !== itemUsed);
     setInventory(updatedInventory);
-  
+
     const updatedStats = {
       ...stats,
       health: Math.max(0, stats.health - 1),
@@ -69,47 +82,40 @@ export default function CharacterCreator() {
       water: Math.max(0, stats.water - 1)
     };
     setStats(updatedStats);
-  
+
     const newLog = [
       ...messageLog,
       { role: 'user', content: `${name || 'The hero'} decides to ${choice}.` }
     ];
     setMessageLog(newLog);
-  
+
     try {
       const response = await fetch('/api/story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messageLog: newLog })
+        body: JSON.stringify({ messageLog: newLog, tone, genre, maxTokens: 350,
+     settingSeed: selectedSeed     
+         })
       });
-  
-      let data;
-      try {
-        data = await response.json();
-      } catch (err) {
-        console.error('Failed to parse JSON from response:', err);
-        setAdventureLog(prev => [...prev, '⚠ Server returned invalid JSON.']);
-        return;
-      }
-  
+
+      const data = await response.json();
+
       if (!response.ok || !data.reply || !data.reply.content) {
-        console.error('LLM Error:', data.error || 'No response content.');
         setAdventureLog(prev => [...prev, '⚠ The LLM failed to respond correctly.']);
         return;
       }
-  
+
       const story = data.reply.content;
-      setAdventureLog((prev) => [...prev, story]);
+      setAdventureLog(prev => [...prev, story]);
       setStoryPrompt(`Inventory used: ${itemUsed}. Next move?`);
-  
+
       if (updatedStats.health <= 0 || updatedStats.food <= 0 || updatedStats.water <= 0) {
-        setAdventureLog((prev) => [...prev, '❌ Your journey ends here. You succumb to the harsh world.']);
+        setAdventureLog(prev => [...prev, '❌ Your journey ends here. You succumb to the harsh world.']);
       }
     } catch (error) {
-      console.error('Error during fetch:', error);
       setAdventureLog(prev => [...prev, '❌ A network or server error occurred.']);
     }
-  };  
+  };
 
   return (
     <div className="min-h-screen bg-[#1e0f0a] text-amber-100 p-10 font-serif">
@@ -146,6 +152,20 @@ export default function CharacterCreator() {
             {traits.map((trait) => (<option key={trait.name} value={trait.name} title={trait.lore}>{trait.name}</option>))}
           </select>
           {selectedTrait && <p className="mt-1 text-sm italic text-amber-300">{traits.find(t => t.name === selectedTrait).lore}</p>}
+        </label>
+
+        <label className="block mb-4">
+          <span className="block mb-1 font-medium">Tone:</span>
+          <select className="w-full p-2 rounded bg-[#1c0a06] border border-amber-500 text-amber-100" value={tone} onChange={(e) => setTone(e.target.value)}>
+            {tones.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </label>
+
+        <label className="block mb-4">
+          <span className="block mb-1 font-medium">Genre:</span>
+          <select className="w-full p-2 rounded bg-[#1c0a06] border border-amber-500 text-amber-100" value={genre} onChange={(e) => setGenre(e.target.value)}>
+            {genres.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
         </label>
 
         <div className="mt-6 text-sm text-amber-200">
