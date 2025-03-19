@@ -6,7 +6,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        ember: ['"Cedarville Cursive"', 'cursive'],
+        header: ['"Playfair Display"', 'serif'],
+        body: ['"Spectral"', 'serif'],
+        clean: ['"Inter"', 'sans-serif'],
       },
     },
   },
