@@ -9,7 +9,6 @@ export default function Navbar() {
         <ul className="flex gap-6 text-lg">
           <li><Link to="/" className="hover:text-amber-500 transition">Home</Link></li>
           <li><Link to="/book-teaser" className="hover:text-amber-500 transition">Book Teaser</Link></li>
-          <li><Link to="/game" className="hover:text-amber-500 transition">Mini Game</Link></li>
           <li><Link to="/dev-tools" className="hover:text-amber-500 transition">Dev Tools</Link></li>
           <li><Link to="/writing-toolkit" className="hover:text-amber-500 transition">Writing Toolkit</Link></li>
         </ul>
